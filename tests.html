@@ -1,0 +1,19 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="//code.jquery.com/qunit/qunit-1.18.0.css">
+    <script src="//code.jquery.com/qunit/qunit-1.18.0.js"></script>
+    <script src="jspm_packages/system.js"></script>
+    <script src="config.js"></script>
+    <script>
+      "use strict";
+      System.config({
+        baseURL:"./"
+      });
+      System.import('tests')
+    </script>
+  </head>
+  <body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture"></div>
+  </body>
+</html>
