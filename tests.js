@@ -2,6 +2,8 @@
 
 console.log('Hello')
 import {goboard} from "es6/board"
+import {connectedComponentLabeler} from "es6/connectedComponentLabeler"
+
 
 QUnit.test( "create Go board", function( assert ) {
     var test1 = new goboard(10,10)
@@ -36,7 +38,7 @@ QUnit.test( "duplicate", function( assert ) {
 
 
 QUnit.test( "big boards", function( assert ) {
-    var b1 = new goboard(10000,10000)
+    var b1 = new goboard(1000,1000)
     var b2 = b1.duplicate()
     assert.ok( b1, "big")
     assert.ok( b2, "duplicate")
@@ -52,4 +54,32 @@ QUnit.test( "in bounds", function( assert ) {
     assert.ok( !b1.inBounds(0,1), "0,1")
     assert.ok( !b1.inBounds(11,1), "11,1")
     assert.ok( !b1.inBounds(1,11), "1,11")
+})
+
+function randomBoard(w,h) {
+    var b1 = new goboard(w,h)
+    for(var x=1; x<b1.width-1; x++) {
+        for(var y=1; y<b1.height-1; y++) {
+            var val = Math.floor(Math.random()*2)
+            b1.setXY(x,y,val)
+        } 
+    }
+    return b1
+}
+
+QUnit.test( "connectedComponentLabeler", function( assert ) {
+
+    var b1 = randomBoard(10,10)
+    var c1 = new connectedComponentLabeler(b1.width, b1.height, b1.squares)
+    c1.connectAll()
+    //console.log(b1.toString())
+    //console.log(c1.toString())
+    //console.log(c1)
+    assert.ok( c1.groups.length > 3, "small board")
+
+    var b2 = randomBoard(1000,1000)
+    var c2 = new connectedComponentLabeler(b2.width, b2.height, b2.squares)
+    c2.connectAll()
+    assert.ok( c2.groups.length > 3, "big board")
+
 })

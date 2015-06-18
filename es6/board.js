@@ -1,12 +1,10 @@
 "use strict";
-//export goboard=4
-//export "ES6, systemjs, and JSPM are made by a bunch of dumb shits"
 
 export class goboard {
   constructor(width, height) {
     this.width = width + 2 //pad the borders
     this.height = height + 2
-    this.squares = new Int8Array(this.width*this.height)
+    this.squares = new Int32Array(this.width*this.height)
     // constants
     this.EMPTY=0
     this.BLACK=1
@@ -70,7 +68,7 @@ export class goboard {
     var result = ""
     for(var y=0; y<this.height; y++){
       for(var x=0; x<this.width; x++){
-        result += this.whatsAt(x,y)
+        result += this.whatsAt(x,y) + " "
       }
       result += "\n"
     }
