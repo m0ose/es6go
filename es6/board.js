@@ -5,11 +5,6 @@ export class goboard {
     this.width = width + 2 //pad the borders
     this.height = height + 2
     this.squares = new Int32Array(this.width*this.height)
-    // constants
-    this.EMPTY=0
-    this.BLACK=1
-    this.WHITE=2
-    this.BORDER=3
     //init
     this._initialize()
   }
@@ -75,3 +70,9 @@ export class goboard {
     return result
   }
 }
+// ENUMS
+//  Why es6 makes me specify these outside of the class is beyond me. 
+goboard.prototype.EMPTY=0
+goboard.prototype.BLACK=1
+goboard.prototype.WHITE=2
+goboard.prototype.BORDER=3
