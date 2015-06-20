@@ -99,6 +99,24 @@ QUnit.test("game liberties", function(assert) {
     assert.equal(libs[2].liberties.length, 6,'2nd group ok')
     assert.equal(libs[1].liberties.length, 0,'middle group ok')
     assert.equal(libs[0].liberties.length, 6,'bottom group ok')
+})
+
+QUnit.test("play a stone", function(assert) {
+    var g = new game(6,10)
+    var b = g.board
+    b.setXY(1,2,b.BLACK)
+    b.setXY(2,1,b.BLACK)
+    b.setXY(2,2,b.WHITE)
+    b.setXY(3,1,b.WHITE)
+    b.setXY(1,3,b.WHITE)
+    console.log('board for try to play tests test\n', b.toString())
+    var suicide = g.tryToPlay(1,1,b.BLACK)
+    assert.ok( suicide.error, "suicide: " + suicide.error)
+    var capture = g.tryToPlay(1,1,b.WHITE)
+    assert.ok( !capture.error, "capture error: " + capture.error)
+    console.log( capture.board.toString())
+    assert.equal( capture.dead.length, 2, "captured stones: " + capture.dead.length)
+    console.log('dead', capture.dead)
 
 
 

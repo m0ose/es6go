@@ -9,7 +9,50 @@ export class game {
     }
 
     tryToPlay(x,y,color) {
-        // TODO
+        if(this.board.whatsAt(x,y) !== this.board.EMPTY){
+            return {error:"Must play in empty spot"}
+        }
+        var tempBoard = this.board.duplicate()
+        tempBoard.setXY(x,y,color)
+        var libers= this.liberties(tempBoard)
+        var dead = []
+        for(var i=0; i<libers.length; i++ ) {
+            var libt = libers[i]
+            var possibleSuicide = undefined
+            if(libt.liberties.length <= 0) {
+                if( libt.value != color) { 
+                    dead.push(libt)
+                } else { 
+                    possibleSuicide = true
+                }
+            }
+        }
+        var error = true
+        if(possibleSuicide) {
+            error = "Suicide not permitted"
+            for(var i=0; i<dead.length; i++) {
+                var d = dead[i]
+                if(d.value != color) {
+                    error = false
+                }
+            }
+        }
+        return{error:error, dead:dead, board:tempBoard}
+    }
+
+    playXY(x,y,color) {
+       /* var play = this.tryToPlay(x,y,color)
+        if(play.error) {
+            throw play.error
+        }
+        //capture dead stones
+        var captureCount = 0
+        for(var i=0; i<play.dead.length){
+            var stone = play.dead[i]
+            this.board.setXY(stone[0], stone[1], this.board.EMPTY)
+
+        }
+        */
     }
 
     // find all of the liberties for the different groups
