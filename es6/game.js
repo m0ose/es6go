@@ -8,16 +8,16 @@ export class game {
         this.board = new goboard(width,height)
     }
 
-    tryToPlay(x,y,color) {
+    tryToPlaceStone(x,y,color) {
         if(this.board.whatsAt(x,y) !== this.board.EMPTY){
             return {error:"Must play in empty spot"}
         }
+        // make a temporary board to play on. This could be concerning for performance...possibly. not really sure. 
         var tempBoard = this.board.duplicate()
         tempBoard.setXY(x,y,color)
         var libers= this.liberties(tempBoard)
         var dead = []
-        for(var i=0; i<libers.length; i++ ) {
-            var libt = libers[i]
+        for(let libt of libers) {
             var possibleSuicide = undefined
             if(libt.liberties.length <= 0) {
                 if( libt.value != color) { 
@@ -30,32 +30,36 @@ export class game {
         var error = true
         if(possibleSuicide) {
             error = "Suicide not permitted"
-            for(var i=0; i<dead.length; i++) {
-                var d = dead[i]
+            for(let d of dead) {
                 if(d.value != color) {
                     error = false
                 }
             }
         }
-        return{error:error, dead:dead, board:tempBoard}
+        var captures = this.removeDead(tempBoard, dead)
+        return{error:error, dead:dead, board:tempBoard, captures:captures}
     }
 
-    playXY(x,y,color) {
-       /* var play = this.tryToPlay(x,y,color)
-        if(play.error) {
-            throw play.error
+    removeDead( board, deadGroups) {
+        var capturedCount = 0
+        for(var dg of deadGroups) {
+            for(var stone of dg.group) {
+                board.setXY(stone[0], stone[1], board.EMPTY)
+                capturedCount++
+            }
         }
-        //capture dead stones
-        var captureCount = 0
-        for(var i=0; i<play.dead.length){
-            var stone = play.dead[i]
-            this.board.setXY(stone[0], stone[1], this.board.EMPTY)
-
-        }
-        */
+        return capturedCount
     }
 
-    // find all of the liberties for the different groups
+    placeStone(x,y,color) {
+        var attempt = this.tryToPlaceStone(x,y,color)
+        if(!attempt.error) {
+            this.board = attempt.board
+        } 
+        return attempt
+    }
+
+    // first find the groups then the liberties for the groups
     liberties(board) {
         var labeler = new connectedComponentLabeler(board.width, board.height, board.squares)
         var components = labeler.connectAll()
