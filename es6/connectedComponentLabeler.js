@@ -19,7 +19,11 @@ export class connectedComponentLabeler {
         this.height = height
         this.width  = width
         this.data = data
-        this.ignoredBackground = 0 //-1 for no background. 0 treats zeros like a background, 1 treats ones as background...
+        // settings
+        this.ignoredBackground = -1 //-1 for no background. 0 treats all zeros like a background, 1 treats all ones as background... 
+        // CONSTANTS
+        this.IGNORED = -1
+        this.UNINSPECTED = 0 //the whole array is initially set to zero. So setting this to zero saves one loop.
     }
 
     //   Find all of the blobs/connected components.
@@ -28,15 +32,15 @@ export class connectedComponentLabeler {
     connectAll() {
         this.groups = []
         this.labels = new Int32Array(this.data.length)
-        var label = 1
+        var label = 1 // make the internal labels one indexed
         for(var x=1; x<this.width-1; x++) {
             for(var y=1; y<this.height-1; y++) {
                 var index = y*this.width + x
                 var crumb = this.labels[index]
                 var value = this.data[index]
                 if( value === this.ignoredBackground) {
-                    this.labels[index] = -1
-                } else if( crumb === 0) {
+                    this.labels[index] = this.IGNORED
+                } else if( crumb === this.UNINSPECTED) { 
                     var group = this.flood(x,y,label)
                     this.groups[label-1] = group
                     label += 1
@@ -52,27 +56,29 @@ export class connectedComponentLabeler {
         var val = this.data[y1*this.width + x1]
         for(var i=0; list.length>0 && i<1000000;i++) {
             var xy = list.pop()
-            members.push(xy)
             var x = xy[0]
             var y = xy[1]
             var index = y*this.width+x
-            this.labels[index] = label
-            var up = (y-1)*this.width+x
-            var down = (y+1)*this.width+x
-            var left = y*this.width+x-1
-            var right = y*this.width+x+1
-            if(this.data[up] === val && this.labels[up] === 0){
-                list.push([x,y-1])
-            }
-            if(this.data[down] === val && this.labels[down] === 0){
-                list.push([x,y+1])
-            }
-            if(this.data[left] === val && this.labels[left] === 0){
-                list.push([x-1,y])
-            }
-            if(this.data[right] === val && this.labels[right] === 0){
-                list.push([x+1,y])
-            }
+            if(this.labels[index] === this.UNINSPECTED) {
+                members.push(xy)
+                this.labels[index] = label
+                var up = (y-1)*this.width+x
+                var down = (y+1)*this.width+x
+                var left = y*this.width+x-1
+                var right = y*this.width+x+1
+                if(this.data[up] === val && this.labels[up] === this.UNINSPECTED){
+                    list.push([x,y-1])
+                }
+                if(this.data[down] === val && this.labels[down] === this.UNINSPECTED){
+                    list.push([x,y+1])
+                }
+                if(this.data[left] === val && this.labels[left] === this.UNINSPECTED){
+                    list.push([x-1,y])
+                }
+                if(this.data[right] === val && this.labels[right] === this.UNINSPECTED){
+                    list.push([x+1,y])
+                }
+            } 
         }
         //console.log(members)
         return {value:val, group:members}

@@ -27,16 +27,19 @@ export class game {
                 }
             }
         }
-        var error = true
+        var error = undefined
         if(possibleSuicide) {
             error = "Suicide not permitted"
             for(let d of dead) {
                 if(d.value != color) {
-                    error = false
+                    error = undefined
                 }
             }
         }
-        var captures = this.removeDead(tempBoard, dead)
+        var captures = 0
+        if(!error){
+            captures = this.removeDead(tempBoard, dead)
+        }
         return{error:error, dead:dead, board:tempBoard, captures:captures}
     }
 

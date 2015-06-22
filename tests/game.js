@@ -28,7 +28,7 @@ QUnit.test("play a stone", function(assert) {
     b.setXY(2,2,b.WHITE)
     b.setXY(3,1,b.WHITE)
     b.setXY(1,3,b.WHITE)
-    console.log('_______board for try to play tests test\n', b.toString())
+    console.log('_______board place stone 1\n', b.toString())
     var suicide = g.tryToPlaceStone(1,1,b.BLACK)
     assert.ok( suicide.error, "suicide: " + suicide.error)
     var capture = g.tryToPlaceStone(1,1,b.WHITE)
@@ -44,6 +44,31 @@ QUnit.test("play a stone", function(assert) {
     console.log( g.board.toString())
 })
 
+QUnit.test("play a stone 2", function(assert) {
+    var g = new game(4,4)
+    var b = g.board
+    for(var i=1; i<b.width-1; i++) {
+        b.setXY(i,1,b.WHITE)
+        b.setXY(i,2,b.WHITE)
+        b.setXY(i,3,b.WHITE)
+        b.setXY(i,4,b.WHITE)
+    }
+    b.setXY(2,2,b.EMPTY)
+    var occupied1 = g.placeStone(1,1,b.BLACK)
+    var occupied2 = g.placeStone(1,1,b.WHITE)
+    assert.ok(occupied1.error, "occupied1 "+occupied1.error)
+    assert.ok(occupied2.error, "occupied2 "+occupied1.error)
+    var suicide = g.placeStone(2,2,b.WHITE)
+    assert.ok( suicide.error, "suicide: " + suicide.error)
+    console.log('_______board place stone 2________\n', b.toString())
+    var capture = g.placeStone(2,2,b.BLACK)
+    console.log(capture)
+    assert.ok( !capture.error, "should not have error. error: " + capture.error)
+    assert.equal( capture.captures, 15, "captured: " + capture.captures)
+    console.log('after playing at 2,2:')
+    console.log( g.board.toString())
+})
+
 QUnit.test("place stone timing", function(assert) {
     var g = new game(19,19)
     var b = g.board
@@ -52,7 +77,7 @@ QUnit.test("place stone timing", function(assert) {
     b.setXY(2,2,b.WHITE)
     b.setXY(3,1,b.WHITE)
     b.setXY(1,3,b.WHITE)
-    var loopCount = 10000
+    var loopCount = 1000
     var start = new Date().getTime()
     for( var i=0; i < loopCount; i++) {
         var suicide = g.tryToPlaceStone(1,1,b.BLACK)

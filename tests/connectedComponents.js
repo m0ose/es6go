@@ -25,5 +25,5 @@ QUnit.test( "connectedComponentLabeler", function( assert ) {
     var b2 = randomBoard(1000,1000)
     var c2 = new connectedComponentLabeler(b2.width, b2.height, b2.squares)
     c2.connectAll()
-    assert.ok( c2.groups.length > 3, "big board")
+    assert.ok( c2.groups.length > 3, "big board 1000x1000")
 })
