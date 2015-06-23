@@ -6,17 +6,24 @@ export class game {
         this.width = width
         this.height = height
         this.board = new goboard(width,height)
+        this.HISTORYLENGTH = 4 //THIS could be very slow if it's too big. Im actuall not sure how big this needs to be. Its possible there is a max value
+        this.history = []
     }
 
     tryToPlaceStone(x,y,color) {
+        var error = undefined
+        var captures = 0
+        var dead = []
         if(this.board.whatsAt(x,y) !== this.board.EMPTY){
             return {error:"Must play in empty spot"}
         }
-        // make a temporary board to play on. This could be concerning for performance...possibly. not really sure. 
+        if(!this.board.inBounds(x,y)) {
+            return {error:"Out of bounds"}
+        }
+        // make a temporary board to play on. This could be concerning for performance...possibly.
         var tempBoard = this.board.duplicate()
         tempBoard.setXY(x,y,color)
         var libers= this.liberties(tempBoard)
-        var dead = []
         for(let libt of libers) {
             var possibleSuicide = undefined
             if(libt.liberties.length <= 0) {
@@ -27,19 +34,26 @@ export class game {
                 }
             }
         }
-        var error = undefined
+        // check for suicide
         if(possibleSuicide) {
             error = "Suicide not permitted"
             for(let d of dead) {
-                if(d.value != color) {
+                if(d.value != color) { //this check should be sufficiant
                     error = undefined
                 }
             }
         }
-        var captures = 0
+        // remove dead
         if(!error){
             captures = this.removeDead(tempBoard, dead)
+            //check for repeated KO, by not allowing board to repeat.
+            for(let oldboard of this.history) {
+                if(tempBoard.isEqualTo(oldboard)) {
+                    error = "Board repeated itself"
+                }
+            }
         }
+        // return 
         return{error:error, dead:dead, board:tempBoard, captures:captures}
     }
 
@@ -54,9 +68,10 @@ export class game {
         return capturedCount
     }
 
-    placeStone(x,y,color) {
+    placeStone(x, y, color) {
         var attempt = this.tryToPlaceStone(x,y,color)
         if(!attempt.error) {
+            this.recordHistory( this.board)
             this.board = attempt.board
         } 
         return attempt
@@ -94,5 +109,13 @@ export class game {
             }
         }
         return result
+    }
+
+    // Store some old boards for comparison. Stores at most this.HISTORYLENGTH 
+    recordHistory(board) {
+        while( this.history.length >= this.HISTORYLENGTH) {
+            this.history.shift()
+        }
+        this.history.push(board)
     }
 }

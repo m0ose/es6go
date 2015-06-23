@@ -69,6 +69,44 @@ QUnit.test("play a stone 2", function(assert) {
     console.log( g.board.toString())
 })
 
+QUnit.test("KO", function(assert) {
+    var g = new game(5,4)
+    //inital peices
+    g.placeStone(1,1,g.board.WHITE)
+    g.placeStone(3,2,g.board.BLACK)
+    g.placeStone(2,2,g.board.WHITE)
+    g.placeStone(4,1,g.board.BLACK)
+    g.placeStone(3,1,g.board.WHITE)
+    // take first peice
+    console.log('_____KO_____')
+    console.log('before move 1\n' + g.board.toString())
+    var m1 = g.placeStone(2, 1, g.board.BLACK)
+    assert.ok( !m1.error, "should not have error. error: " + m1.error)
+    assert.equal( m1.captures, 1, "captured a stone: " + m1.captures)
+    console.log('after move 1\n' + g.board.toString())
+    var b2 = g.board.duplicate()
+    //fail to re-take ko 
+    var m2 = g.placeStone(3, 1, g.board.WHITE)
+    assert.ok( m2.error , "failed re-take of KO: " + m2.error)
+    assert.ok( b2.isEqualTo(g.board) , "board didn't change ")
+    assert.ok( g.history.length <= g.HISTORYLENGTH, "not leaking history")
+    console.log('after move 2\n' + g.board.toString())
+    //move somewhere else
+    var m3 = g.placeStone(4, 4, g.board.WHITE)
+    var m4 = g.placeStone(3, 4, g.board.BLACK)
+    // now retake the ko
+    var m5 = g.placeStone(3, 1, g.board.WHITE)
+    assert.ok( !m5.error , "re-take KO: " + m5.error)
+    assert.equal( m5.captures, 1, "1 capture ")
+    assert.ok( g.history.length <= g.HISTORYLENGTH, "not leaking history")
+    console.log('after move some more moves\n' + g.board.toString())
+    //fail to re-take ko 
+    var m6 = g.placeStone(2, 1, g.board.BLACK)
+    assert.ok( m6.error , "failed re-take of KO: " + m6.error)
+
+    console.log(g)
+})
+
 QUnit.test("place stone timing", function(assert) {
     var g = new game(19,19)
     var b = g.board
