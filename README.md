@@ -5,7 +5,7 @@ Im not ready yet.
 
 Installation:
 *  install jspm if not already done.
-*  install babel ```jspm init -p``` (I just use the defaults)
+*  install babel ```jspm init```
 *  open tests.html (it must be running from a web server. I always run a local apache server)
 
 
