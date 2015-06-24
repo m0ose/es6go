@@ -131,17 +131,33 @@ QUnit.test("sgf", function(assert) {
     var plays = parseSGFGhetto(shusaku)
     var score = [0,0,0,0]
     var errors = []
+    var count = 0
     for(let a of plays) {
+        count ++
         var p = g.placeStone(a.x,a.y,a.c)
         if(p.error){
             errors.push(p.error)
         }
         score[a.c] += p.captures
+        if(count == 282) {
+            assert.equal(score[g.board.BLACK], 19, "19 captures for black")
+            assert.equal(score[g.board.WHITE], 22, "22 captures for white")
+        }
+        if(count == 298) {
+            assert.equal(score[g.board.BLACK], 23, "23 captures for black")
+            assert.equal(score[g.board.WHITE], 26, "26 captures for white")
+            console.log('________real game 298________\n',g.board.toString())
+        }
+        if(count == 299) {
+            assert.equal(score[g.board.BLACK], 31, "31 captures for black")
+            assert.equal(score[g.board.WHITE], 26, "26 captures for white")
+            console.log('________real game 299________\n',g.board.toString())
+        }
         //console.log("____"+a.x+","+a.y+'\n' + g.board.toString())
     }
     console.log(score)
-    assert.equal(score[g.board.BLACK], 35, "35 captures for black")
-    assert.equal(score[g.board.WHITE], 29, "29 captures for white")
+    assert.equal(score[g.board.BLACK], 35, "Final 35 captures for black")
+    assert.equal(score[g.board.WHITE], 29, "Final 29 captures for white")
     assert.equal(plays.length, 325, "325 moves total")
 
     assert.equal(errors.length, 0, "no errors")

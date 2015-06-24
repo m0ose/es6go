@@ -6,7 +6,7 @@ export class game {
         this.width = width
         this.height = height
         this.board = new goboard(width,height)
-        this.HISTORYLENGTH = 4 //THIS could be very slow if it's too big. Im actuall not sure how big this needs to be. Its possible there is a max value
+        this.HISTORYLENGTH = 3 //THIS could be very slow if it's too big. Im actuall not sure how big this needs to be. Its possible there is a max value
         this.history = []
     }
 
