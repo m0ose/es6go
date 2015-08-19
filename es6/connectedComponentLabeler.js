@@ -81,7 +81,7 @@ export class connectedComponentLabeler {
             } 
         }
         //console.log(members)
-        return {value:val, group:members}
+        return new group(val,members)//{value:val, group:members}
     }
 
     labelAt(x,y) { 
@@ -105,4 +105,25 @@ export class connectedComponentLabeler {
         return result
     }
 
+}
+
+export class group {
+    constructor(value, members) {
+        this.value = value
+        this.group = members
+    }
+
+    centroid() {
+        var cent = [0,0]
+        var count = 0
+        for(var i=0; i<this.group.length; i++) {
+            count++
+            var mem = this.group[i]
+            cent[0] += mem[0]
+            cent[1] += mem[1]
+        }
+        cent[0] = cent[0]/count
+        cent[1] = cent[1]/count
+        return cent
+    }
 }
